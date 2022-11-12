@@ -20,6 +20,17 @@ camera.position.setZ(30);
 
 renderer.render(scene, camera);
 
+// create the sun object
+const sunTexture = new THREE.TextureLoader().load("/sun.jpg");
+const sun = new THREE.Mesh(
+  new THREE.SphereGeometry(10, 50, 50),
+  new THREE.MeshStandardMaterial({
+    map: sunTexture,
+  })
+);
+
+scene.add(sun);
+
 // create the moon object
 const moonTexture = new THREE.TextureLoader().load("/moon.jpg");
 const moon = new THREE.Mesh(
@@ -29,30 +40,17 @@ const moon = new THREE.Mesh(
   })
 );
 
-scene.add(moon);
-
-// create the sun object
-const sunTexture = new THREE.TextureLoader().load("/sun.jpg");
-const sun = new THREE.Mesh(
-  new THREE.SphereGeometry(10, 50, 50),
-  new THREE.MeshStandardMaterial({
-    map: sunTexture,
-  })
-);
-sun.translateX(40);
-sun.translateY(10);
-
-scene.add(sun);
+sun.add(moon);
+moon.position.x = 28;
 
 const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(20, 20, 20);
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
 scene.add(pointLight, ambientLight);
 
 const lightHelper = new THREE.PointLightHelper(pointLight);
-const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(lightHelper, gridHelper);
+//const gridHelper = new THREE.GridHelper(200, 50);
+//scene.add(lightHelper, gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 const asteroidTexture = new THREE.TextureLoader().load("/asteroid.jpg");
@@ -67,9 +65,9 @@ function addAsteroid() {
     .fill()
     .map(() => THREE.MathUtils.randFloatSpread(100));
   asteroid.position.set(x, y, z);
-  scene.add(asteroid);
+  sun.add(asteroid);
 }
-Array(75).fill().forEach(addAsteroid);
+Array(100).fill().forEach(addAsteroid);
 
 const spaceTexture = new THREE.TextureLoader().load("/space.jpg");
 scene.background = spaceTexture;
@@ -79,7 +77,6 @@ function animate() {
   moon.rotation.x += 0.001;
   moon.rotation.y += 0.005;
   moon.rotation.z += 0.001;
-  moon.translateX(0.01);
 
   sun.rotation.x += 0.00001;
   sun.rotation.y += 0.0005;
